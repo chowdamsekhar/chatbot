@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1> Chatbot Example</h1>
+    <div>
+      <div id="chatbox">
+        <p class="botText"><span>Hi! I'm Chatbot.</span></p>
+        <p class="botText"><span>Please enter your mail</span></p>
+      </div>
+      <div id="userInput">
+        <input id="textInput" type="text" name="msg" placeholder="Message">
+        <input id="buttonInput" type="submit" value="Send">
+      </div>
+      <script>
+        function getBotResponse() {
+          var rawText = $("#textInput").val();
+          var userHtml = '<p class="userText"><span>' + rawText + '</span></p>';
+          $("#textInput").val("");
+          $("#chatbox").append(userHtml);
+          document.getElementById('userInput').scrollIntoView({block: 'start', behavior: 'smooth'});
+          $.get("/chatterbot", { msg: rawText }).done(function(data) {
+            if(data == 'Please select date & time') {
+              var botHtml =  `<p class="botText"><span> Please select date & time </span></p>' <input class="form-control" type="datetime-local" name="dateappt_tech" id="dateappt_tech">`
+              $("#chatbox").append(botHtml)
+            } else {
+              var botHtml = '<p class="botText"><span>' + data + '</span></p>';
+              $("#chatbox").append(botHtml)
+            }
+            document.getElementById('userInput').scrollIntoView({block: 'start', behavior: 'smooth'});
+            $("input[name='dateappt_tech']").on("change", function () {
+              alert("Your meeting is scheduled at "+this.value);
+            });
+          });
+        }
+        $("#textInput").keypress(function(e) {
+            if ((e.which == 13) && document.getElementById("textInput").value != "" ){
+                getBotResponse();
+            }
+        });
+        $("#buttonInput").click(function() {
+            if (document.getElementById("textInput").value != "") {
+                getBotResponse();
+            }
+        })
+      </script>
+    </div>
+  </body>
+</html>
